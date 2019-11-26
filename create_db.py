@@ -6,9 +6,9 @@
 import pandas as pd
 from py2neo import Graph, Node, Relationship, NodeMatcher
 
-sym = pd.read_csv('data/sym_t.csv')
-dia = pd.read_csv('data/dia_t.csv')
-rel = pd.read_csv('data/diffsydiw.csv')
+sym = pd.read_csv('./data/sym_t.csv')
+dia = pd.read_csv('./data/dia_t.csv')
+rel = pd.read_csv('./data/diffsydiw.csv')
 
 sym = sym.dropna()
 dia = dia.dropna()
