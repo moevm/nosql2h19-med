@@ -1,6 +1,8 @@
 from PIL import Image, ImageTk
 import tkinter as tk
 from pandastable import Table, TableModel
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # , NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
 
 
 class BkgrFrame(tk.Frame):
@@ -25,7 +27,7 @@ class BkgrFrame(tk.Frame):
 
 
 class HeaderFrames(tk.Frame):
-    def __init__(self, parent, color):
+    def __init__(self, parent, color, click):
         super(HeaderFrames, self).__init__(parent, borderwidth=0, highlightthickness=0, background=color, )
 
         self.COLOR = color
@@ -34,11 +36,11 @@ class HeaderFrames(tk.Frame):
         self.label.pack()
 
         self.btn = []
-        self.btn.append(tk.Button(self, bg=self.COLOR, text="Import"))
-        self.btn.append(tk.Button(self, bg=self.COLOR, text="Export"))
-        self.btn.append(tk.Button(self, bg=self.COLOR, text="Recogniser"))
-        self.btn.append(tk.Button(self, bg=self.COLOR, text="Statistics"))
-        self.btn.append(tk.Button(self, bg=self.COLOR, text="Graph"))
+        self.btn.append(tk.Button(self, bg=self.COLOR, text="Import", command=lambda: click("Import")))
+        self.btn.append(tk.Button(self, bg=self.COLOR, text="Export", command=lambda: click("Export")))
+        self.btn.append(tk.Button(self, bg=self.COLOR, text="Recogniser", command=lambda: click("Recogniser")))
+        self.btn.append(tk.Button(self, bg=self.COLOR, text="Statistics", command=lambda: click("Statistics")))
+        self.btn.append(tk.Button(self, bg=self.COLOR, text="Graph", command=lambda: click("Graph")))
 
         for b in self.btn:
             b.pack(side=tk.LEFT, expand=True, fill=tk.X)
@@ -48,34 +50,140 @@ class HeaderFrames(tk.Frame):
 
 class Container(tk.Frame):
     def __init__(self, parent, width, height):
-        super(Container, self).__init__(parent, borderwidth=0, highlightthickness=0, width=width, height=height - 50)
+        super(Container, self).__init__(parent, borderwidth=0,
+                                        highlightthickness=0)  # , width=width, height=height - 50)
         width = width
         height = height - 50
 
         self.content = None
 
-        self.pack()
+        # self.pack()
 
-    def insert(self, widget):
-        print("inserted!!!")
-        self.content = widget
-        # self.content.pack()
+    def replace_with(self, frame):
+        if self.content is not None:
+            self.content.forget()
+        self.content = frame
+        self.content.pack()
 
 
 class TableFrame(tk.Frame):
     """Basic test frame for the table"""
 
+    # http: // dmnfarrell.github.io / pandastable /
+
     def __init__(self, parent=None):
         super(TableFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
         self.f = tk.Frame(self)
-        self.f.pack(fill=tk.BOTH, expand=1)
+        # self.f.pack(fill=tk.BOTH, expand=1)
+        self.f.grid(row=0, column=0)
         self.df = TableModel.getSampleData()
         self.table = pt = Table(self.f, dataframe=self.df)
-        print("i'm table!")
+        # print("i'm table!")
         pt.show()
-        self.pack(side=tk.RIGHT)
+        # self.pack(side=tk.RIGHT)
 
 
+class PlotFrame(tk.Frame):
+    """Basic test frame for the table"""
+
+    # http: // dmnfarrell.github.io / pandastable /
+
+    def __init__(self, parent=None):
+        super(PlotFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
+        f = Figure(figsize=(5, 5), dpi=100)
+        a = f.add_subplot(111)
+        a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+
+        canvas = FigureCanvasTkAgg(f, self)
+        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+
+class RecFrame(tk.Frame):
+    def __init__(self, parent=None):
+        super(RecFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
+
+        self.label1 = tk.Label(self, text="Ch00se your symptoms")
+        self.label1.grid(row=0, column=0)
+
+        self.entry = tk.Entry(self)
+        self.entry.grid(row=1, column=0)
+
+        self.btn = tk.Button(self, text="Submit")
+        self.btn.grid(row=1, column=1)
+
+        self.sellab = tk.Label(self, text="Selected sympt")
+        self.sellab.grid(row=2, column=0)
+
+        self.seltb = TableFrame(self)
+        self.seltb.grid(row=3, column=0)
+
+        self.label2 = tk.Label(self, text="Related Diagnoses")
+        self.label2.grid(row=0, column=2)
+
+        self.symtb = TableFrame(self)
+        self.symtb.grid(row=3, column=2)
+
+        # self.pack()
+
+
+class ImportExportFrame(tk.Frame):
+    def __init__(self, parent, click, text):
+        super(ImportExportFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
+
+        self.t1 = TableFrame(self)
+        self.t1.grid(row=0, column=0)
+
+        self.t2 = TableFrame(self)
+        self.t2.grid(row=0, column=1)
+
+        self.t3 = TableFrame(self)
+        self.t3.grid(row=0, column=2)
+
+        self.btn = tk.Button(self, text=text, command=lambda: click())
+        self.btn.grid(row=1, column=1)
+
+
+class StatFrame(tk.Frame):
+    def __init__(self, parent, click):
+        super(StatFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
+
+        self.label1 = tk.Label(self, text="Ch00se your symptoms")
+        self.label1.grid(row=0, column=0)
+
+        self.entry = tk.Entry(self)
+        self.entry.grid(row=1, column=0)
+
+        self.btn = tk.Button(self, text="Submit")
+        self.btn.grid(row=1, column=1)
+
+        self.sellab = tk.Label(self, text="Selected sympt")
+        self.sellab.grid(row=2, column=0)
+
+        self.seltb = TableFrame(self)
+        self.seltb.grid(row=3, column=0)
+
+        self.plot = PlotFrame(self)
+        self.plot.grid(row=3, column=3)
+
+        self.statbtn = tk.Button(self, text="Statistic", command=lambda: click("BDStat"))
+        self.statbtn.grid(row=4, column=3)
+
+
+class CommonStatFrame(tk.Frame):
+    def __init__(self, parent):
+        super(CommonStatFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
+
+        self.l1 = tk.Label(self, text="The most fr symptoms")
+        self.l1.grid(row=0, column=1)
+
+        self.l2 = tk.Label(self, text="The least diagnosable diagnoses")
+        self.l2.grid(row=0, column=2)
+
+        self.plot1 = PlotFrame(self)
+        self.plot1.grid(row=1, column=1)
+
+        self.plot2 = PlotFrame(self)
+        self.plot2.grid(row=1, column=2)
 
 # app = TableFrame()
 # launch the app

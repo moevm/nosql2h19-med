@@ -3,27 +3,31 @@ from PIL import Image, ImageTk
 from manager import *
 
 if __name__ == '__main__':
-
-
-
     IMAGE_PATH = './appdata/background.jpg'
-    WIDTH, HEIGTH = 1050, 600
+    WIDTH, HEIGTH = 1500, 800
 
-    m = Manager(IMAGE_PATH,WIDTH,HEIGTH)
+    m = Manager(IMAGE_PATH, WIDTH, HEIGTH)
 
     m.run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # # Put some tkinter widgets in the BkgrFrame.
     # button1 = bkrgframe.add(tk.Button(root, text="Start"), 10, 10)
     # button2 = bkrgframe.add(tk.Button(root, text="Continue"), 50, 10)
-
-
-
-
-
-
-
-
 
 # import tkinter
 # import cv2
