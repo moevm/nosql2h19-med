@@ -4,7 +4,7 @@ from pandastable import Table, TableModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg# , NavigationToolbar2TkAgg
 
 
-class Manager:
+class tkManager:
     def __init__(self, IMAGE_PATH, WIDTH, HEIGTH):
         print("I'm manager!!")
 
@@ -29,6 +29,8 @@ class Manager:
         self.stat = frames.StatFrame(self.container,click=lambda opt:self.clik(opt))
         self.comm = frames.CommonStatFrame(self.container)
 
+    def setbd(self, gman):
+        self.gman = gman
 
     def clik(self, opt):
         if self.container is None:
