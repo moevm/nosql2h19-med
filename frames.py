@@ -3,6 +3,7 @@ import tkinter as tk
 from pandastable import Table, TableModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # , NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+import pandas as pd
 
 
 class BkgrFrame(tk.Frame):
@@ -36,8 +37,8 @@ class HeaderFrames(tk.Frame):
         self.label.pack()
 
         self.btn = []
-        self.btn.append(tk.Button(self, bg=self.COLOR, text="Import", command=lambda: click("Import")))
-        self.btn.append(tk.Button(self, bg=self.COLOR, text="Export", command=lambda: click("Export")))
+        self.btn.append(tk.Button(self, bg=self.COLOR, text="Import/Export", command=lambda: click("Import/Export")))
+        # self.btn.append(tk.Button(self, bg=self.COLOR, text="Export", command=lambda: click("Export")))
         self.btn.append(tk.Button(self, bg=self.COLOR, text="Recogniser", command=lambda: click("Recogniser")))
         self.btn.append(tk.Button(self, bg=self.COLOR, text="Statistics", command=lambda: click("Statistics")))
         self.btn.append(tk.Button(self, bg=self.COLOR, text="Graph", command=lambda: click("Graph")))
@@ -70,24 +71,19 @@ class TableFrame(tk.Frame):
     """Basic test frame for the table"""
 
     # http: // dmnfarrell.github.io / pandastable /
-
-    def __init__(self, parent=None):
+    def __init__(self, parent, width=400, height=500, ):
         super(TableFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
-        self.f = tk.Frame(self)
-        # self.f.pack(fill=tk.BOTH, expand=1)
-        self.f.grid(row=0, column=0)
-        self.df = TableModel.getSampleData()
-        self.table = pt = Table(self.f, dataframe=self.df)
-        # print("i'm table!")
+        self.table = pt = Table(self, width=width, height=height)
         pt.show()
-        # self.pack(side=tk.RIGHT)
+
+    def updateData(self, data):
+        model = TableModel(pd.DataFrame.from_records(data))
+        self.table.updateModel(model)
+        self.table.redraw()
+        print("Modifing some data")
 
 
 class PlotFrame(tk.Frame):
-    """Basic test frame for the table"""
-
-    # http: // dmnfarrell.github.io / pandastable /
-
     def __init__(self, parent=None):
         super(PlotFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
         f = Figure(figsize=(5, 5), dpi=100)
@@ -96,6 +92,9 @@ class PlotFrame(tk.Frame):
 
         canvas = FigureCanvasTkAgg(f, self)
         canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+    def putdata(self, data):
+        print("Putting new plot")
 
 
 class RecFrame(tk.Frame):
@@ -123,24 +122,28 @@ class RecFrame(tk.Frame):
         self.symtb = TableFrame(self)
         self.symtb.grid(row=3, column=2)
 
-        # self.pack()
-
 
 class ImportExportFrame(tk.Frame):
-    def __init__(self, parent, click, text):
+    def __init__(self, parent, clickImp, clickExp, width=350, height=500):
         super(ImportExportFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
 
-        self.t1 = TableFrame(self)
+        self.t1 = TableFrame(self, width=width, height=height)
         self.t1.grid(row=0, column=0)
 
-        self.t2 = TableFrame(self)
+        self.t2 = TableFrame(self, width=width, height=height)
         self.t2.grid(row=0, column=1)
 
-        self.t3 = TableFrame(self)
+        self.t3 = TableFrame(self, width=width, height=height)
         self.t3.grid(row=0, column=2)
 
-        self.btn = tk.Button(self, text=text, command=lambda: click())
-        self.btn.grid(row=1, column=1)
+        self.btnImp = tk.Button(self, text="Import", command=lambda: clickImp(self.get_tables()))
+        self.btnImp.grid(row=1, column=0)
+
+        self.btnExp = tk.Button(self, text="Export", command=lambda: clickExp(self.get_tables()))
+        self.btnExp.grid(row=1, column=1)
+
+    def get_tables(self):
+        return [self.t1, self.t2, self.t3]
 
 
 class StatFrame(tk.Frame):

@@ -1,7 +1,7 @@
 import tkinter as tk
 import frames
 from pandastable import Table, TableModel
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg# , NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # , NavigationToolbar2TkAgg
 
 
 class tkManager:
@@ -11,6 +11,7 @@ class tkManager:
         self.root = tk.Tk()
         self.root.geometry('{}x{}'.format(WIDTH, HEIGTH))
 
+        self.gman = None
         self.container = None
 
         self.header = frames.HeaderFrames(self.root, color="#0099ff", click=lambda opt: self.clik(opt))
@@ -24,9 +25,8 @@ class tkManager:
         self.t1 = frames.TableFrame(self.container)
         self.p1 = frames.PlotFrame(self.container)
         self.frrec = frames.RecFrame(self.container)
-        self.imp = frames.ImportExportFrame(self.container,self.imp,"Import")
-        self.exp = frames.ImportExportFrame(self.container,self.exp,"Export")
-        self.stat = frames.StatFrame(self.container,click=lambda opt:self.clik(opt))
+        self.ief = frames.ImportExportFrame(self.container, self.do_imp, self.do_exp)
+        self.stat = frames.StatFrame(self.container, click=lambda opt: self.clik(opt))
         self.comm = frames.CommonStatFrame(self.container)
 
     def setbd(self, gman):
@@ -37,13 +37,15 @@ class tkManager:
             print("Init?" + opt)
             return
 
-        if opt == "Import":
-            self.container.replace_with(self.imp)
-            print("im Import")
+        if opt == "Import/Export":
+            # self.imp.set_tables(self.stf)
+            self.container.replace_with(self.ief)
+            print("im Import and Export")
 
-        if opt == "Export":
-            self.container.replace_with(self.exp)
-            print("im Export")
+        # if opt == "Export":
+        #     self.exp.set_tables(self.stf)
+        #     self.container.replace_with(self.exp)
+        #     print("im Export")
 
         if opt == "Recogniser":
             self.container.replace_with(self.frrec)
@@ -61,14 +63,20 @@ class tkManager:
             self.container.replace_with(self.comm)
             print("im BDStat")
 
-
-
-    def imp(self):
+    def do_imp(self, tables):
+        if self.gman is None:
+            print("Error! No bd manager was found!")
+            return 1
+        resp = self.gman.loadCSV()
+        t1, t2, t3 = tables
+        t1.updateData(resp)
+        t2.updateData(resp)
+        t3.updateData(resp)
         print("im importing!")
+        return 0
 
-    def exp(self):
+    def do_exp(self, tables):
         print("im exporting!")
-
 
     def run(self):
         self.root.mainloop()

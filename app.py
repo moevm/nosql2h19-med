@@ -7,18 +7,18 @@ if __name__ == '__main__':
     IMAGE_PATH = './appdata/background.jpg'
     WIDTH, HEIGTH = 1500, 800
 
-    # m = tkManager(IMAGE_PATH, WIDTH, HEIGTH)
+    m = tkManager(IMAGE_PATH, WIDTH, HEIGTH)
 
     GRAPH = "http://localhost:7474/"
 
     bd = bdManager(GRAPH)
 
-    # m.setbd()
+    # resp = bd.loadCSV()
 
 
+    m.setbd(bd)
 
-
-    # m.run()
+    m.run()
 
 
 
