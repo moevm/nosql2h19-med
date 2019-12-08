@@ -124,7 +124,7 @@ class RecFrame(tk.Frame):
 
 
 class ImportExportFrame(tk.Frame):
-    def __init__(self, parent, clickImp, clickExp, width=350, height=500):
+    def __init__(self, parent, clickImp, clickExp, width=345, height=400):
         super(ImportExportFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
 
         self.t1 = TableFrame(self, width=width, height=height)

@@ -20,7 +20,7 @@ class tkManager:
         self.bkrgframe = frames.BkgrFrame(self.root, IMAGE_PATH, WIDTH, HEIGTH)
         self.bkrgframe.pack(side=tk.BOTTOM)
 
-        self.container = self.bkrgframe.createContainer(20, WIDTH, HEIGTH)
+        self.container = self.bkrgframe.createContainer(0, WIDTH, HEIGTH)
 
         self.t1 = frames.TableFrame(self.container)
         self.p1 = frames.PlotFrame(self.container)
@@ -67,15 +67,25 @@ class tkManager:
         if self.gman is None:
             print("Error! No bd manager was found!")
             return 1
-        resp = self.gman.loadCSV()
+        self.gman.load_n_create()
         t1, t2, t3 = tables
+        resp = self.gman.loadCSV_dia_t()
+        # print(resp)
         t1.updateData(resp)
+        resp = self.gman.loadCSV_sym_t()
+        # print(resp)
         t2.updateData(resp)
+        resp = self.gman.loadCSV_dyf()
+        # print(resp)
         t3.updateData(resp)
         print("im importing!")
         return 0
 
     def do_exp(self, tables):
+        if self.gman is None:
+            print("Error! No bd manager was found!")
+            return 1
+        self.gman.drop_db()
         print("im exporting!")
 
     def run(self):

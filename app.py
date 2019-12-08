@@ -11,29 +11,13 @@ if __name__ == '__main__':
 
     GRAPH = "http://localhost:7474/"
 
-    bd = bdManager(GRAPH)
+    bd = bdManager(GRAPH, False)
 
     # resp = bd.loadCSV()
-
 
     m.setbd(bd)
 
     m.run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     # # Put some tkinter widgets in the BkgrFrame.
     # button1 = bkrgframe.add(tk.Button(root, text="Start"), 10, 10)
