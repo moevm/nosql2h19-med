@@ -38,7 +38,6 @@ class tkManager:
             return
 
         if opt == "Import/Export":
-            # self.imp.set_tables(self.stf)
             self.container.replace_with(self.ief)
             print("im Import and Export")
 
