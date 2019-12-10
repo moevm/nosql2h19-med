@@ -48,7 +48,7 @@ class tkManager:
         else:
             data = self.gman.get_sym_via_ids([id])
             sym.updateData(data)
-            
+
 
     def clik(self, opt):
         if self.container is None:

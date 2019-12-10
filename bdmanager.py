@@ -49,6 +49,14 @@ class bdManager:
             return False
         return True
 
+    def get_sym_via_ids(self, ids):
+        query = "MATCH (S:sym_t) " \
+                "WHERE S.syd in {} " \
+                "RETURN S.Symptom AS Symptom, S.syd AS syd".format(ids)
+        resp = self.graph.run(query)
+        # print(resp.data())
+        return resp.data()
+
     def loadCSV_dia_t(self):
         if not self.is_ok():
             return {}

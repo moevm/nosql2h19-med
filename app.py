@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     GRAPH = "http://localhost:7474/"
 
-    bd = bdManager(GRAPH, False)
+    bd = bdManager(GRAPH, True)
 
     # resp = bd.loadCSV()
 

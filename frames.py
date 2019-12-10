@@ -82,6 +82,10 @@ class TableFrame(tk.Frame):
         self.table.redraw()
         print("Modifing some data")
 
+    def get_model(self):
+        # print(self.table.model)
+        return self.table.model
+
 
 class PlotFrame(tk.Frame):
     def __init__(self, parent=None):
@@ -98,7 +102,7 @@ class PlotFrame(tk.Frame):
 
 
 class RecFrame(tk.Frame):
-    def __init__(self, parent=None):
+    def __init__(self, parent, on_submit, selected_sym={}, related_diag={}):
         super(RecFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
 
         self.label1 = tk.Label(self, text="Ch00se your symptoms")
@@ -106,8 +110,9 @@ class RecFrame(tk.Frame):
 
         self.entry = tk.Entry(self)
         self.entry.grid(row=1, column=0)
+        self.entry.bind("<Key>", lambda event: self.submit(event))
 
-        self.btn = tk.Button(self, text="Submit")
+        self.btn = tk.Button(self, text="Submit", command=lambda: self.submit())
         self.btn.grid(row=1, column=1)
 
         self.sellab = tk.Label(self, text="Selected sympt")
@@ -115,12 +120,27 @@ class RecFrame(tk.Frame):
 
         self.seltb = TableFrame(self)
         self.seltb.grid(row=3, column=0)
+        self.seltb.updateData(selected_sym)
 
         self.label2 = tk.Label(self, text="Related Diagnoses")
         self.label2.grid(row=0, column=2)
 
-        self.symtb = TableFrame(self)
-        self.symtb.grid(row=3, column=2)
+        self.diagtb = TableFrame(self)
+        self.diagtb.grid(row=3, column=2)
+        self.diagtb.updateData(related_diag)
+
+        self.update = on_submit
+
+    def submit(self, e=None):
+        if e is not None:
+            if e.keycode != 13:
+                return
+        id = self.entry.get()
+        self.entry.delete(0, tk.END)
+        self.update(id, self.get_tables())
+
+    def get_tables(self):
+        return [self.seltb, self.diagtb]
 
 
 class ImportExportFrame(tk.Frame):
