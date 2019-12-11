@@ -4,6 +4,7 @@ from pandastable import Table, TableModel
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # , NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 import pandas as pd
+import numpy as np
 
 
 class BkgrFrame(tk.Frame):
@@ -80,67 +81,83 @@ class TableFrame(tk.Frame):
         model = TableModel(pd.DataFrame.from_records(data))
         self.table.updateModel(model)
         self.table.redraw()
-        print("Modifing some data")
 
     def get_model(self):
         # print(self.table.model)
-        return self.table.model
+        return [self.table.model, "Table"]
 
 
 class PlotFrame(tk.Frame):
     def __init__(self, parent=None):
         super(PlotFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
-        f = Figure(figsize=(5, 5), dpi=100)
-        a = f.add_subplot(111)
-        a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+        self.f = Figure(figsize=(6, 5), dpi=100)
+        self.a = self.f.add_subplot(111)
+        self.a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
 
-        canvas = FigureCanvasTkAgg(f, self)
-        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.canvas = FigureCanvasTkAgg(self.f, self)
+        self.canvas.get_tk_widget().pack()
 
-    def putdata(self, data):
+    def updateData(self, ydata, xdata):
+        self.canvas.get_tk_widget().forget()
+        self.f = Figure(figsize=(7, 5), dpi=100)
+        self.a = self.f.add_subplot(111)
+        self.a.barh(ydata, xdata, left=100, align="edge")
+        # print(len(ydata))
+        # position = np.arange(len(ydata))
+        # self.a.set_yticks(position)
+        # self.a.yaxis.label.set_size(100)
+        self.canvas = FigureCanvasTkAgg(self.f, self)
+        self.canvas.get_tk_widget().pack()
         print("Putting new plot")
+
+    def get_model(self):
+        return [self.a, "Plot"]
+
+
+def submit(self, e=None):
+    if e is not None:
+        if e.keycode != 13:
+            return
+    id = self.entry.get()
+    self.entry.delete(0, tk.END)
+    self.update(id, self.get_tables())
+    return
 
 
 class RecFrame(tk.Frame):
     def __init__(self, parent, on_submit, selected_sym={}, related_diag={}):
         super(RecFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
+        self.update = on_submit
 
         self.label1 = tk.Label(self, text="Ch00se your symptoms")
         self.label1.grid(row=0, column=0)
 
         self.entry = tk.Entry(self)
         self.entry.grid(row=1, column=0)
-        self.entry.bind("<Key>", lambda event: self.submit(event))
+        self.entry.bind("<Key>", lambda event: submit(self, event))
 
-        self.btn = tk.Button(self, text="Submit", command=lambda: self.submit())
+        self.btn = tk.Button(self, text="Submit")
         self.btn.grid(row=1, column=1)
 
         self.sellab = tk.Label(self, text="Selected sympt")
         self.sellab.grid(row=2, column=0)
 
-        self.seltb = TableFrame(self,340,400)
+        self.seltb = TableFrame(self, 340, 400)
         self.seltb.grid(row=3, column=0)
         self.seltb.updateData(selected_sym)
 
         self.label2 = tk.Label(self, text="Related Diagnoses")
         self.label2.grid(row=0, column=2)
 
-        self.diagtb = TableFrame(self,340,400)
+        self.diagtb = TableFrame(self, 340, 400)
         self.diagtb.grid(row=3, column=2)
         self.diagtb.updateData(related_diag)
 
-        self.update = on_submit
-
-    def submit(self, e=None):
-        if e is not None:
-            if e.keycode != 13:
-                return
-        id = self.entry.get()
-        self.entry.delete(0, tk.END)
-        self.update(id, self.get_tables())
-
     def get_tables(self):
         return [self.seltb, self.diagtb]
+
+    def update_model(self, model):
+        self.seltb.updateData(model)
 
 
 class ImportExportFrame(tk.Frame):
@@ -167,14 +184,16 @@ class ImportExportFrame(tk.Frame):
 
 
 class StatFrame(tk.Frame):
-    def __init__(self, parent, click):
+    def __init__(self, parent, click, on_submit, selsym={}):
         super(StatFrame, self).__init__(parent, borderwidth=0, highlightthickness=0)
+        self.update = on_submit
 
         self.label1 = tk.Label(self, text="Ch00se your symptoms")
         self.label1.grid(row=0, column=0)
 
         self.entry = tk.Entry(self)
         self.entry.grid(row=1, column=0)
+        self.entry.bind("<Key>", lambda event: submit(self, event))
 
         self.btn = tk.Button(self, text="Submit")
         self.btn.grid(row=1, column=1)
@@ -184,12 +203,19 @@ class StatFrame(tk.Frame):
 
         self.seltb = TableFrame(self)
         self.seltb.grid(row=3, column=0)
+        self.seltb.updateData(selsym)
 
         self.plot = PlotFrame(self)
         self.plot.grid(row=3, column=3)
 
         self.statbtn = tk.Button(self, text="Statistic", command=lambda: click("BDStat"))
         self.statbtn.grid(row=4, column=3)
+
+    def update_model(self, model):
+        self.seltb.updateData(model)
+
+    def get_tables(self):
+        return [self.seltb, self.plot]
 
 
 class CommonStatFrame(tk.Frame):
@@ -208,6 +234,8 @@ class CommonStatFrame(tk.Frame):
         self.plot2 = PlotFrame(self)
         self.plot2.grid(row=1, column=2)
 
-# app = TableFrame()
-# launch the app
-# app.mainloop()
+    def get_plots(self):
+        return [self.plot1, self.plot2]
+
+    def get_summary_label(self):
+        return -1

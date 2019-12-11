@@ -49,6 +49,30 @@ class bdManager:
             return False
         return True
 
+    def get_BDStat(self):
+        query1 = "MATCH (s:sym_t) " \
+                 "RETURN s.Symptom AS name, size((s)-[:INDICATES]->()) AS matches " \
+                 "LIMIT 10"
+        # query2 = ""
+        resp1 = self.graph.run(query1)
+        # resp2 = self.graph.run(query2)
+        # return [resp1.data(), resp2.data()]
+        return resp1.data()
+
+    def get_stat_for_plot(self,ids):
+        query = "WITH {} as ids " \
+                "MATCH (s:sym_t)-[:INDICATES]->(d:dia_t) " \
+                "WHERE s.syd in ids " \
+                "WITH d,count(*) AS cnt " \
+                "ORDER BY cnt DESC " \
+                "RETURN d.did As Diagnoses, cnt as freq " \
+                "LIMIT 15".format(ids)
+        resp = self.graph.run(query)
+        return resp.data()
+
+    # def get_sel_diag_stat(self, ids):
+    #     return -1
+
     def get_diag_via_syd(self, syd):
         if not self.is_ok():
             return {}
