@@ -42,7 +42,7 @@ class HeaderFrames(tk.Frame):
         # self.btn.append(tk.Button(self, bg=self.COLOR, text="Export", command=lambda: click("Export")))
         self.btn.append(tk.Button(self, bg=self.COLOR, text="Recogniser", command=lambda: click("Recogniser")))
         self.btn.append(tk.Button(self, bg=self.COLOR, text="Statistics", command=lambda: click("Statistics")))
-        self.btn.append(tk.Button(self, bg=self.COLOR, text="Graph", command=lambda: click("Graph")))
+        # self.btn.append(tk.Button(self, bg=self.COLOR, text="Graph", command=lambda: click("Graph")))
 
         for b in self.btn:
             b.pack(side=tk.LEFT, expand=True, fill=tk.X)
@@ -99,7 +99,7 @@ class PlotFrame(tk.Frame):
 
     def updateData(self, ydata, xdata):
         self.canvas.get_tk_widget().forget()
-        self.f = Figure(figsize=(7, 5), dpi=100)
+        self.f = Figure(figsize=(6, 5), dpi=100)
         self.a = self.f.add_subplot(111)
         self.a.barh(ydata, xdata, left=100, align="edge")
         # print(len(ydata))
@@ -234,8 +234,11 @@ class CommonStatFrame(tk.Frame):
         self.plot2 = PlotFrame(self)
         self.plot2.grid(row=1, column=2)
 
+        self.label_sum = tk.Label(self, text="The mean value to determine a diagnose is {} ")
+        self.label_sum.grid(row=2,column=1)
+
     def get_plots(self):
         return [self.plot1, self.plot2]
 
     def get_summary_label(self):
-        return -1
+        return self.label_sum

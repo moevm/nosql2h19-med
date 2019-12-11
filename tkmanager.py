@@ -70,7 +70,6 @@ class tkManager:
                 data = self.gman.get_stat_for_plot(str)
             names, val = self.process2plot(data)
             val = [i / sum(val) * 100 for i in val]
-            print( val )
             diag.updateData(names, val)
 
     def process2plot(self, data):
@@ -80,11 +79,17 @@ class tkManager:
 
     def do_BDstat(self):
         pl1, pl2 = self.comm.get_plots()
-        data = self.gman.get_BDStat()
-        print(data)
-        model, type = pl1.get_model()
+        d1, d2 = self.gman.get_BDStat()
+        names, val = self.process2plot(d1)
+        pl1.updateData(names, val)
+        names, val = self.process2plot(d2)
+        pl2.updateData(names, val)
 
-        model.plot
+        label = self.comm.get_summary_label()
+        data = self.gman.get_avg()
+        text = label['text'].format(data[0]['avg'])
+        label['text'] = text
+        # print(data)
 
     def clik(self, opt):
         if self.container is None:
@@ -125,7 +130,6 @@ class tkManager:
         resp = self.gman.loadCSV_sym_t()
         t2.updateData(resp)
         resp = self.gman.loadCSV_dyf()
-        print(resp)
         t3.updateData(resp)
         return 0
 
@@ -133,6 +137,8 @@ class tkManager:
         if self.gman is None:
             print("Error! No bd manager was found!")
             return 1
+        for t in tables:
+            t.updateData({})
         self.gman.drop_db()
         print("im exporting!")
 

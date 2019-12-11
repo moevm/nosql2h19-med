@@ -51,15 +51,24 @@ class bdManager:
 
     def get_BDStat(self):
         query1 = "MATCH (s:sym_t) " \
-                 "RETURN s.Symptom AS name, size((s)-[:INDICATES]->()) AS matches " \
-                 "LIMIT 10"
-        # query2 = ""
+                 "RETURN s.syd AS Diagnoses, size((s)-[:INDICATES]->()) AS freq " \
+                 "LIMIT 15"
+        query2 = " MATCH p=()-[:INDICATES]->(d:dia_t)" \
+                 " WITH d, count(*) AS cnt" \
+                 " ORDER BY cnt " \
+                 " RETURN d.did AS Diagnoses,cnt as freq" \
+                 " SKIP 20" \
+                 " LIMIT 15"
         resp1 = self.graph.run(query1)
-        # resp2 = self.graph.run(query2)
-        # return [resp1.data(), resp2.data()]
-        return resp1.data()
+        resp2 = self.graph.run(query2)
+        return [resp1.data(), resp2.data()]
 
-    def get_stat_for_plot(self,ids):
+    def get_avg(self):
+        query = "MATCH (d:dia_t) RETURN  avg(size((d)<-[:INDICATES]-())) as avg"
+        resp = self.graph.run(query)
+        return resp.data()
+
+    def get_stat_for_plot(self, ids):
         query = "WITH {} as ids " \
                 "MATCH (s:sym_t)-[:INDICATES]->(d:dia_t) " \
                 "WHERE s.syd in ids " \
