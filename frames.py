@@ -118,14 +118,14 @@ class RecFrame(tk.Frame):
         self.sellab = tk.Label(self, text="Selected sympt")
         self.sellab.grid(row=2, column=0)
 
-        self.seltb = TableFrame(self)
+        self.seltb = TableFrame(self,340,400)
         self.seltb.grid(row=3, column=0)
         self.seltb.updateData(selected_sym)
 
         self.label2 = tk.Label(self, text="Related Diagnoses")
         self.label2.grid(row=0, column=2)
 
-        self.diagtb = TableFrame(self)
+        self.diagtb = TableFrame(self,340,400)
         self.diagtb.grid(row=3, column=2)
         self.diagtb.updateData(related_diag)
 

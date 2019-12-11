@@ -41,14 +41,17 @@ class tkManager:
         if not df.empty:
             ids = df[df.columns[1]].to_numpy()
             id = np.append(id, ids)
-            print(id)
             str = np.array2string(id, separator=" , ")
             data = self.gman.get_sym_via_ids(str)
             sym.updateData(data)
+            data = self.gman.get_diag_via_syd(str)
+            print(data)
+            diag.updateData(data)
         else:
             data = self.gman.get_sym_via_ids([id])
             sym.updateData(data)
-
+            data = self.gman.get_diag_via_syd([id])
+            diag.updateData(data)
 
     def clik(self, opt):
         if self.container is None:
@@ -58,11 +61,6 @@ class tkManager:
         if opt == "Import/Export":
             self.container.replace_with(self.ief)
             print("im Import and Export")
-
-        # if opt == "Export":
-        #     self.exp.set_tables(self.stf)
-        #     self.container.replace_with(self.exp)
-        #     print("im Export")
 
         if opt == "Recogniser":
             self.container.replace_with(self.frrec)
@@ -87,15 +85,12 @@ class tkManager:
         self.gman.load_n_create()
         t1, t2, t3 = tables
         resp = self.gman.loadCSV_dia_t()
-        # print(resp)
         t1.updateData(resp)
         resp = self.gman.loadCSV_sym_t()
-        # print(resp)
         t2.updateData(resp)
         resp = self.gman.loadCSV_dyf()
         print(resp)
         t3.updateData(resp)
-        # print("im importing!")
         return 0
 
     def do_exp(self, tables):

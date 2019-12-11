@@ -49,12 +49,24 @@ class bdManager:
             return False
         return True
 
+    def get_diag_via_syd(self, syd):
+        if not self.is_ok():
+            return {}
+        query = " MATCH (s:sym_t)-[:INDICATES]->(d) " \
+                " WHERE s.syd in {} " \
+                " RETURN d.Diagnoses AS Diagnoses," \
+                " COLLECT( DISTINCT d.did) AS did ".format(syd)
+        # print(query)
+        resp = self.graph.run(query)
+        return resp.data()
+
     def get_sym_via_ids(self, ids):
+        if not self.is_ok():
+            return {}
         query = "MATCH (S:sym_t) " \
                 "WHERE S.syd in {} " \
                 "RETURN S.Symptom AS Symptom, S.syd AS syd".format(ids)
         resp = self.graph.run(query)
-        # print(resp.data())
         return resp.data()
 
     def loadCSV_dia_t(self):
