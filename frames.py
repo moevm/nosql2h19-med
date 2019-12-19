@@ -98,14 +98,13 @@ class PlotFrame(tk.Frame):
         self.canvas.get_tk_widget().pack()
 
     def updateData(self, ydata, xdata):
+        my_max = len(max(ydata,key=len))
+        print(my_max)
         self.canvas.get_tk_widget().forget()
         self.f = Figure(figsize=(6, 5), dpi=100)
+        self.f.subplots_adjust(left= 0.5 if my_max-50 > 0 else my_max/80 )
         self.a = self.f.add_subplot(111)
         self.a.barh(ydata, xdata, left=100, align="edge")
-        # print(len(ydata))
-        # position = np.arange(len(ydata))
-        # self.a.set_yticks(position)
-        # self.a.yaxis.label.set_size(100)
         self.canvas = FigureCanvasTkAgg(self.f, self)
         self.canvas.get_tk_widget().pack()
         print("Putting new plot")
@@ -235,7 +234,7 @@ class CommonStatFrame(tk.Frame):
         self.plot2.grid(row=1, column=2)
 
         self.label_sum = tk.Label(self, text="The mean value to determine a diagnose is {} ")
-        self.label_sum.grid(row=2,column=1)
+        self.label_sum.grid(row=2, column=1)
 
     def get_plots(self):
         return [self.plot1, self.plot2]

@@ -51,12 +51,12 @@ class bdManager:
 
     def get_BDStat(self):
         query1 = "MATCH (s:sym_t) " \
-                 "RETURN s.syd AS Diagnoses, size((s)-[:INDICATES]->()) AS freq " \
+                 "RETURN s.Symptom AS Diagnoses, size((s)-[:INDICATES]->()) AS freq " \
                  "LIMIT 15"
         query2 = " MATCH p=()-[:INDICATES]->(d:dia_t)" \
                  " WITH d, count(*) AS cnt" \
                  " ORDER BY cnt " \
-                 " RETURN d.did AS Diagnoses,cnt as freq" \
+                 " RETURN d.Diagnoses AS Diagnoses,cnt as freq" \
                  " SKIP 20" \
                  " LIMIT 15"
         resp1 = self.graph.run(query1)
@@ -74,7 +74,7 @@ class bdManager:
                 "WHERE s.syd in ids " \
                 "WITH d,count(*) AS cnt " \
                 "ORDER BY cnt DESC " \
-                "RETURN d.did As Diagnoses, cnt as freq " \
+                "RETURN d.Diagnoses As Diagnoses, cnt as freq " \
                 "LIMIT 15".format(ids)
         resp = self.graph.run(query)
         return resp.data()
